@@ -1,9 +1,10 @@
 import express from "express";
+import { router as userRouter } from "#src/authn/index.js";
 
-const app = express();
+export const app = express();
+
+app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => {
   res.json("Hello World!");
 });
-
-app.listen(3000);
