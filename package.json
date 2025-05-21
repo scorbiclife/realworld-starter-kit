@@ -10,6 +10,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "imports": {
+    "#src/*": "./src/*"
+  },
   "keywords": [],
   "author": "scorbiclife <scorbiclife+npm@gmail.com>",
   "license": "MIT",
