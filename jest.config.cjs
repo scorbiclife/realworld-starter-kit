@@ -1,7 +1,6 @@
 module.exports = {
-  testEnvironment: 'node',
-  moduleFileExtensions: ['js', 'cjs'],
-  testMatch: ['**/src/**/*.test.cjs'],
+  testEnvironment: "node",
+  testMatch: ["**/src/**/*.test.(js|cjs|mjs)"],
   transform: {},
-  verbose: true
+  verbose: true,
 };
