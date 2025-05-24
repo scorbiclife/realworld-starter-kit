@@ -22,8 +22,7 @@ export class Hs256JwtService {
     this.algorithm = /** @type {const} */ ("HS256");
   }
 
-  async sign({ username, email, password }) {
-    // TODO: add password verification
+  async sign({ username, email }) {
     const token = await jwt.sign({ username, email }, this.secret, {
       algorithm: this.algorithm,
       expiresIn: this.expiresIn,

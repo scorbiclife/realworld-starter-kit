@@ -50,11 +50,11 @@ function makeUserValidationMiddleware({ userService, passport }) {
 
 function makeJwtMiddleware(jwtService) {
   return async function middleware(req, res) {
-    const { email, username, password } = req.body.user;
+    const { email, username } = req.body.user;
     let token;
     // JWT signing shouldn't throw
     try {
-      token = await jwtService.sign({ username, email, password });
+      token = await jwtService.sign({ username, email });
     } catch (error) {
       // TODO: add logger
       res.status(500).json({});
