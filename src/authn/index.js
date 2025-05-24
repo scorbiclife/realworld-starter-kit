@@ -10,7 +10,7 @@ function validateRequest(req, res, next) {
     typeof req.body.user.email === "string" &&
     typeof req.body.user.password === "string";
   if (!validRequest) {
-    res.status(400).json(invalidRequestMessage);
+    return res.status(400).json(invalidRequestMessage);
   }
   next();
 }
