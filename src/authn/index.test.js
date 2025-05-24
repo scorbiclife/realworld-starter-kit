@@ -5,6 +5,7 @@ import supertest from "supertest";
 
 import { Hs256JwtService } from "./JwtService.js";
 import { makeRouter } from "./index.js";
+import { InMemoryUserService } from "./InMemoryUserService.js";
 
 const TEST_JWT_SECRET = "test-jwt-secret";
 const testJwtService = new Hs256JwtService({
@@ -12,9 +13,20 @@ const testJwtService = new Hs256JwtService({
   expiresIn: "10m",
 });
 
+const testUserService = new InMemoryUserService({
+  iterations: 100,
+});
+await testUserService.register({ username: "Jacob", password: "jakejake" });
+
 const app = express();
 app.use(bodyParser.json());
-app.use("/", makeRouter(testJwtService));
+app.use(
+  "/",
+  makeRouter({
+    jwtService: testJwtService,
+    userService: testUserService,
+  })
+);
 
 describe("authentication", () => {
   test("user registration succeeds on valid request", async () => {

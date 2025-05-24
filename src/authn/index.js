@@ -1,4 +1,6 @@
 import express from "express";
+import { Passport } from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
 
 function validateRequest(req, res, next) {
   const invalidRequestMessage = {
@@ -15,7 +17,38 @@ function validateRequest(req, res, next) {
   next();
 }
 
-function makeAuthMiddleware(jwtService) {
+function makeUserValidationMiddleware({ userService, passport }) {
+  async function verify(username, password, done) {
+    let user;
+
+    try {
+      user = await userService.findOne({ username });
+    } catch (err) {
+      return done(err);
+    }
+
+    if (!user) {
+      return done(null, false);
+    }
+
+    if (!(await user.isValidPassword(password))) {
+      return done(null, false);
+    }
+
+    return done(null, user);
+  }
+
+  passport.use(
+    new LocalStrategy(
+      // Accessing nested fields is undocumented but implemented in `passport-local` source
+      { usernameField: "user[username]", passwordField: "user[password]" },
+      verify
+    )
+  );
+  return passport.authenticate("local", { assignProperty: "user" });
+}
+
+function makeJwtMiddleware(jwtService) {
   return async function middleware(req, res) {
     const { email, username, password } = req.body.user;
     let token;
@@ -40,8 +73,16 @@ function makeAuthMiddleware(jwtService) {
   };
 }
 
-export function makeRouter(jwtService) {
+export function makeRouter({
+  userService,
+  jwtService,
+  passport = new Passport(),
+}) {
   const authnRouter = express.Router();
-  authnRouter.post("/", [validateRequest, makeAuthMiddleware(jwtService)]);
+  authnRouter.post("/", [
+    validateRequest,
+    makeUserValidationMiddleware({ userService, passport }),
+    makeJwtMiddleware(jwtService),
+  ]);
   return authnRouter;
 }
