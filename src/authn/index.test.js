@@ -42,6 +42,19 @@ describe("authentication", () => {
     expect(response.status).toStrictEqual(400);
   });
 
+  test("on invalid credentials, responds with 401", async () => {
+    const response = await supertest(app)
+      .post("/")
+      .send({
+        user: {
+          username: "invalid-user",
+          email: "unknown@example.org",
+          password: "invalid-password",
+        },
+      });
+    expect(response.status).toBe(401);
+  });
+
   test("on valid user login, responds with 200 with the expected return type", async () => {
     const response = await supertest(app)
       .post("/")
