@@ -1,17 +1,28 @@
 {
-  "dependencies": {
-    "express": "^5.1.0",
-    "mysql2": "^3.14.1"
-  },
   "name": "@scorbiclife/realworld",
   "version": "0.0.1",
   "description": "express codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.",
-  "main": "src/app.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest"
+  },
+  "imports": {
+    "#src/*": "./src/*"
   },
   "keywords": [],
   "author": "scorbiclife <scorbiclife+npm@gmail.com>",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.1"
+  }
 }
