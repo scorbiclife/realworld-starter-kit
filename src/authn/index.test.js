@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use("/", authnRouter);
 
 describe("authentication", () => {
-  test("user registration", async () => {
+  test("user registration succeeds on valid request", async () => {
     const response = await supertest(app)
       .post("/")
       .send({
@@ -28,5 +28,17 @@ describe("authentication", () => {
       bio: "",
       image: null,
     });
+  });
+  test("user registration fails on invalid request", () => {
+    supertest(app)
+      .post("/")
+      .send({
+        user: {
+          username: "Jacob",
+          email: "jake@jake.jake",
+        },
+      })
+      .set("Accept", "application/json")
+      .expect(400);
   });
 });
