@@ -5,7 +5,7 @@ import supertest from "supertest";
 
 import { Hs256JwtService } from "./JwtService.js";
 import { makeRouter } from "./index.js";
-import { InMemoryUserService } from "./InMemoryUserService.js";
+import { InMemoryBcryptUserService as UserService } from "./InMemoryBcryptUserService.js";
 
 const TEST_JWT_SECRET = "test-jwt-secret";
 const testJwtService = new Hs256JwtService({
@@ -13,9 +13,7 @@ const testJwtService = new Hs256JwtService({
   expiresIn: "10m",
 });
 
-const testUserService = new InMemoryUserService({
-  iterations: 100,
-});
+const testUserService = new UserService({});
 await testUserService.register({ username: "Jacob", password: "jakejake" });
 
 const app = express();

@@ -49,7 +49,7 @@ export class Pbkdf2User {
   }
 }
 
-export class InMemoryUserService {
+export class InMemoryPbkdf2UserService {
   constructor({ iterations = 310000, keylen = 32, digest = "sha256" }) {
     this.users = [];
     this.hashSettings = Object.freeze({
