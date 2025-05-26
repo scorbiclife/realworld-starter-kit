@@ -24,7 +24,7 @@ export class Pbkdf2User {
   }
 
   static async fromUsernameAndPassword({ username, password, hashSettings }) {
-    const salt = crypto.randomBytes(256);
+    const salt = crypto.randomBytes(32);
     const passwordHash = await Pbkdf2User.hash({
       password,
       salt,
