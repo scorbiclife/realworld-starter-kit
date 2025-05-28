@@ -1,4 +1,6 @@
-export class MysqlBcryptUserRepository {
+import { UserRepository } from "./UserRepository.js";
+
+export class MysqlBcryptUserRepository extends UserRepository {
   /**
    *
    * @param {import("mysql2/promise").Connection} connection
