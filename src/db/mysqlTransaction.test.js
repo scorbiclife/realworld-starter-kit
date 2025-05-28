@@ -45,57 +45,67 @@ afterEach(async () => {
  */
 
 describe("MysqlTransactionWrapper", () => {
-  test("`runAsTransaction` commits a successful transaction", async () => {
-    await wrapper.runAsTransaction(async (connection) => {
-      connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
-    });
-    const [result] = await connection.query("SELECT * from temporary_table;");
-    expect(result.length).toBe(1);
-  });
-
-  test("rolls back and throws on an unsuccessful transaction", async () => {
-    try {
+  describe("runAsTransaction", () => {
+    test("commits a successful transaction", async () => {
       await wrapper.runAsTransaction(async (connection) => {
-        await connection.query("INSERT INTO temporary_table VALUES (('foo'));");
-        const result = await connection.query(
-          "SELECT * FROM nonexistent_table;"
-        );
-        return result;
+        connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
       });
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error);
       const [result] = await connection.query("SELECT * from temporary_table;");
-      expect(result.length).toBe(0);
-      return;
-    }
-    throw new Error("Unreachable");
-  });
-});
-
-describe("MysqlTransactionWrapper.prototype.withRollbackRun", () => {
-  test("rolls back a successful transaction but does not throw", async () => {
-    await wrapper.autoRollback(async (connection) => {
-      connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
+      expect(result.length).toBe(1);
     });
-    const [result] = await connection.query("SELECT * from temporary_table;");
-    expect(result.length).toBe(0);
+
+    test("rolls back and throws on an unsuccessful transaction", async () => {
+      try {
+        await wrapper.runAsTransaction(async (connection) => {
+          await connection.query(
+            "INSERT INTO temporary_table VALUES (('foo'));"
+          );
+          const result = await connection.query(
+            "SELECT * FROM nonexistent_table;"
+          );
+          return result;
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        const [result] = await connection.query(
+          "SELECT * from temporary_table;"
+        );
+        expect(result.length).toBe(0);
+        return;
+      }
+      throw new Error("Unreachable");
+    });
   });
 
-  test("rolls back and throws on an unsuccessful transaction", async () => {
-    try {
+  describe("autoRollback", () => {
+    test("rolls back a successful transaction but does not throw", async () => {
       await wrapper.autoRollback(async (connection) => {
-        await connection.query("INSERT INTO temporary_table VALUES (('foo'));");
-        const result = await connection.query(
-          "SELECT * FROM nonexistent_table;"
-        );
-        return result;
+        connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
       });
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error);
       const [result] = await connection.query("SELECT * from temporary_table;");
       expect(result.length).toBe(0);
-      return;
-    }
-    throw new Error("Unreachable");
+    });
+
+    test("rolls back and throws on an unsuccessful transaction", async () => {
+      try {
+        await wrapper.autoRollback(async (connection) => {
+          await connection.query(
+            "INSERT INTO temporary_table VALUES (('foo'));"
+          );
+          const result = await connection.query(
+            "SELECT * FROM nonexistent_table;"
+          );
+          return result;
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        const [result] = await connection.query(
+          "SELECT * from temporary_table;"
+        );
+        expect(result.length).toBe(0);
+        return;
+      }
+      throw new Error("Unreachable");
+    });
   });
 });
