@@ -28,7 +28,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await connection.query("DROP TABLE IF EXISTS temporary_table");
+  await connection.query("DROP TABLE IF EXISTS temporary_table;");
   await connection.query("DROP TABLE IF EXISTS nonexistent_table;");
   await connection.query(
     "CREATE TABLE temporary_table(id bigint not null auto_increment, name varchar(64) not null, primary key (id));"
@@ -45,11 +45,11 @@ afterEach(async () => {
  */
 
 describe("MysqlTransactionWrapper", () => {
-  test("`commits a successful transaction", async () => {
+  test("`transactionallyRun` commits a successful transaction", async () => {
     await wrapper.transactionallyRun(async (connection) => {
       connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
     });
-    const [result] = await connection.query("SELECT * from temporary_table");
+    const [result] = await connection.query("SELECT * from temporary_table;");
     expect(result.length).toBe(1);
   });
 
@@ -64,7 +64,7 @@ describe("MysqlTransactionWrapper", () => {
       });
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
-      const [result] = await connection.query("SELECT * from temporary_table");
+      const [result] = await connection.query("SELECT * from temporary_table;");
       expect(result.length).toBe(0);
       return;
     }
@@ -77,7 +77,7 @@ describe("MysqlTransactionWrapper.prototype.withRollbackRun", () => {
     await wrapper.withAutoRollbackRun(async (connection) => {
       connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
     });
-    const [result] = await connection.query("SELECT * from temporary_table");
+    const [result] = await connection.query("SELECT * from temporary_table;");
     expect(result.length).toBe(0);
   });
 
@@ -92,7 +92,7 @@ describe("MysqlTransactionWrapper.prototype.withRollbackRun", () => {
       });
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
-      const [result] = await connection.query("SELECT * from temporary_table");
+      const [result] = await connection.query("SELECT * from temporary_table;");
       expect(result.length).toBe(0);
       return;
     }
