@@ -45,8 +45,8 @@ afterEach(async () => {
  */
 
 describe("MysqlTransactionWrapper", () => {
-  test("`transactionallyRun` commits a successful transaction", async () => {
-    await wrapper.transactionallyRun(async (connection) => {
+  test("`runAsTransaction` commits a successful transaction", async () => {
+    await wrapper.runAsTransaction(async (connection) => {
       connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
     });
     const [result] = await connection.query("SELECT * from temporary_table;");
@@ -55,7 +55,7 @@ describe("MysqlTransactionWrapper", () => {
 
   test("rolls back and throws on an unsuccessful transaction", async () => {
     try {
-      await wrapper.transactionallyRun(async (connection) => {
+      await wrapper.runAsTransaction(async (connection) => {
         await connection.query("INSERT INTO temporary_table VALUES (('foo'));");
         const result = await connection.query(
           "SELECT * FROM nonexistent_table;"
@@ -74,7 +74,7 @@ describe("MysqlTransactionWrapper", () => {
 
 describe("MysqlTransactionWrapper.prototype.withRollbackRun", () => {
   test("rolls back a successful transaction but does not throw", async () => {
-    await wrapper.withAutoRollbackRun(async (connection) => {
+    await wrapper.autoRollback(async (connection) => {
       connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
     });
     const [result] = await connection.query("SELECT * from temporary_table;");
@@ -83,7 +83,7 @@ describe("MysqlTransactionWrapper.prototype.withRollbackRun", () => {
 
   test("rolls back and throws on an unsuccessful transaction", async () => {
     try {
-      await wrapper.withAutoRollbackRun(async (connection) => {
+      await wrapper.autoRollback(async (connection) => {
         await connection.query("INSERT INTO temporary_table VALUES (('foo'));");
         const result = await connection.query(
           "SELECT * FROM nonexistent_table;"

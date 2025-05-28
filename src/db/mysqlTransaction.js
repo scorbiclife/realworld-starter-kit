@@ -21,7 +21,7 @@ export class MysqlTransactionWrapper {
    * @param {Args} args
    * @returns {Promise<Result, Error>}
    */
-  async transactionallyRun(action, ...args) {
+  async runAsTransaction(action, ...args) {
     this.connection.query("START TRANSACTION;");
     let result;
     try {
@@ -44,7 +44,7 @@ export class MysqlTransactionWrapper {
    * @param {Args} args
    * @returns {Promise<Result, Error>}
    */
-  async withAutoRollbackRun(action, ...args) {
+  async autoRollback(action, ...args) {
     this.connection.query("START TRANSACTION;");
     let result;
     try {
