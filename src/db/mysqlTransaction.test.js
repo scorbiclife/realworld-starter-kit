@@ -13,38 +13,38 @@ import { connectionSettings } from "#src/db/connectionSettings.js";
 
 import { MysqlTransactionWrapper } from "./mysqlTransaction.js";
 
-let connection;
-let wrapper;
-
-beforeAll(async () => {
-  connection = await mysql.createConnection(connectionSettings);
-  wrapper = new MysqlTransactionWrapper({
-    connection,
-  });
-});
-
-afterAll(async () => {
-  await wrapper.connection.destroy();
-});
-
-beforeEach(async () => {
-  await connection.query("DROP TABLE IF EXISTS temporary_table;");
-  await connection.query("DROP TABLE IF EXISTS nonexistent_table;");
-  await connection.query(
-    "CREATE TABLE temporary_table(id bigint not null auto_increment, name varchar(64) not null, primary key (id));"
-  );
-});
-
-afterEach(async () => {
-  await connection.query("DROP TABLE temporary_table;");
-});
-
-/**
- * Note: we are using DMLs for testing transactions because
- *  [MySQL implicitly commits DDL statements even in a transaction](https://stackoverflow.com/questions/4692690/is-it-possible-to-roll-back-create-table-and-alter-table-statements-in-major-sql)
- */
-
 describe("MysqlTransactionWrapper", () => {
+  /**
+   * Note: we are using DMLs for testing transactions because
+   *  [MySQL implicitly commits DDL statements even in a transaction](https://stackoverflow.com/questions/4692690/is-it-possible-to-roll-back-create-table-and-alter-table-statements-in-major-sql)
+   */
+
+  let connection;
+  let wrapper;
+
+  beforeAll(async () => {
+    connection = await mysql.createConnection(connectionSettings);
+    wrapper = new MysqlTransactionWrapper({
+      connection,
+    });
+  });
+
+  afterAll(async () => {
+    await wrapper.connection.destroy();
+  });
+
+  beforeEach(async () => {
+    await connection.query("DROP TABLE IF EXISTS temporary_table;");
+    await connection.query("DROP TABLE IF EXISTS nonexistent_table;");
+    await connection.query(
+      "CREATE TABLE temporary_table(id bigint not null auto_increment, name varchar(64) not null, primary key (id));"
+    );
+  });
+
+  afterEach(async () => {
+    await connection.query("DROP TABLE temporary_table;");
+  });
+
   describe("runAsTransaction", () => {
     test("commits a successful transaction", async () => {
       await wrapper.runAsTransaction(async (connection) => {
