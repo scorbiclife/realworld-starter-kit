@@ -5,7 +5,7 @@ export class MysqlBcryptUserRepository extends UserRepository {
    *
    * @param {import("mysql2/promise").Connection} connection
    * @param {{username: string, email: string, password_hash: string}} param1
-   * @returns {Promise<{ status: "success", id: number } | { status: "duplicate_user"}>}
+   * @returns {Promise<{ success: true, id: number } | { success: false, status: "duplicate_user"}>}
    * @throws - unexpected errors
    */
   async save(connection, { username, email, password_hash }) {
@@ -19,7 +19,7 @@ export class MysqlBcryptUserRepository extends UserRepository {
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
         // case: user already exists
-        return { status: "duplicate_user" };
+        return { success: false, status: "duplicate_user" };
       }
       throw error;
     }
@@ -28,6 +28,6 @@ export class MysqlBcryptUserRepository extends UserRepository {
       "select id from `user` where email = ?;",
       [email]
     );
-    return { status: "success", id };
+    return { success: true, id };
   }
 }

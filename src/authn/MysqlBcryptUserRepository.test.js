@@ -22,12 +22,12 @@ describe(MysqlBcryptUserRepository.name, () => {
 
   describe(MysqlBcryptUserRepository.prototype.save.name, () => {
     test("succeeds on happy case", async () => {
-      const { status, id } = await tx.autoRollback(repo.save.bind(repo), {
+      const { success, id } = await tx.autoRollback(repo.save.bind(repo), {
         username: "foo",
         email: "foo@fooverse.com",
         password_hash: "asdf",
       });
-      expect(status).toBe("success");
+      expect(success).toBe(true);
       expect(typeof id).toBe("number");
     });
 
@@ -40,11 +40,15 @@ describe(MysqlBcryptUserRepository.name, () => {
           password_hash: "asdf",
         });
         // This should not throw because duplicate user is an expected condition
-        const { status } = await repo.save(connection, {
-          username: "bar",
-          email: "foo@fooverse.com",
-          password_hash: "qwerty",
-        });
+        const { success, status } =
+          /** @type {{success: false, status: string}} */ (
+            await repo.save(connection, {
+              username: "bar",
+              email: "foo@fooverse.com",
+              password_hash: "qwerty",
+            })
+          );
+        expect(success).toBe(false);
         expect(status).toBe("duplicate_user");
       });
     });
