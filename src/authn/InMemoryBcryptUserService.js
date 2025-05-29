@@ -1,4 +1,4 @@
-import { BcryptUser } from "./BcryptUser.js";
+import { BcryptUser } from "./user/BcryptUser.js";
 
 export class InMemoryBcryptUserService {
   constructor({ bcryptRounds = 10 }) {

@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt";
+import { User } from "./User.js";
 
-export class BcryptUser {
+export class BcryptUser extends User {
   constructor({ username, passwordHash }) {
+    super();
     this.username = username;
     this.passwordHash = passwordHash;
   }
