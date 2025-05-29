@@ -18,11 +18,11 @@ function validateRequest(req, res, next) {
 }
 
 function makeUserValidationMiddleware({ userService, passport }) {
-  async function verify(username, password, done) {
+  async function verify(email, password, done) {
     let user;
 
     try {
-      user = await userService.findOne({ username });
+      user = await userService.findOneByEmail({ email });
     } catch (err) {
       return done(err);
     }
@@ -41,7 +41,7 @@ function makeUserValidationMiddleware({ userService, passport }) {
   passport.use(
     new LocalStrategy(
       // Accessing nested fields is undocumented but implemented in `passport-local` source
-      { usernameField: "user[username]", passwordField: "user[password]" },
+      { usernameField: "user[email]", passwordField: "user[password]" },
       verify
     )
   );

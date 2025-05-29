@@ -5,7 +5,7 @@ import supertest from "supertest";
 
 import { Hs256JwtService } from "./JwtService.js";
 import { makeRouter } from "./index.js";
-import { InMemoryBcryptUserService as UserService } from "./InMemoryBcryptUserService.js";
+import { InMemoryBcryptUserService as UserService } from "./user/InMemoryBcryptUserService.js";
 
 const TEST_JWT_SECRET = "test-jwt-secret";
 const testJwtService = new Hs256JwtService({
@@ -14,7 +14,11 @@ const testJwtService = new Hs256JwtService({
 });
 
 const testUserService = new UserService({});
-await testUserService.register({ username: "Jacob", password: "jakejake" });
+await testUserService.register({
+  username: "Jacob",
+  email: "jake@jake.jake",
+  password: "jakejake",
+});
 
 const app = express();
 app.use(bodyParser.json());
