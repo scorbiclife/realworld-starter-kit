@@ -49,7 +49,6 @@ describe("authentication", () => {
       .post("/")
       .send({
         user: {
-          username: "invalid-user",
           email: "unknown@example.org",
           password: "invalid-password",
         },
@@ -62,7 +61,6 @@ describe("authentication", () => {
       .post("/")
       .send({
         user: {
-          username: "Jacob",
           email: "jake@jake.jake",
           password: "jakejake",
         },

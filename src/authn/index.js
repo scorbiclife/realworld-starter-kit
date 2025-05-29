@@ -8,7 +8,6 @@ function validateRequest(req, res, next) {
   };
   const validRequest =
     req?.body?.user &&
-    typeof req.body.user.username === "string" &&
     typeof req.body.user.email === "string" &&
     typeof req.body.user.password === "string";
   if (!validRequest) {
@@ -50,7 +49,7 @@ function makeUserValidationMiddleware({ userService, passport }) {
 
 function makeJwtMiddleware(jwtService) {
   return async function middleware(req, res) {
-    const { email, username } = req.body.user;
+    const { username, email } = req.user;
     let token;
     // JWT signing shouldn't throw
     try {
