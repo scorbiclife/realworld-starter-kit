@@ -11,7 +11,10 @@ import mysql from "mysql2/promise";
 
 import { connectionSettings } from "#src/db/connectionSettings.js";
 
-import { MysqlTransactionWrapper } from "./mysqlTransaction.js";
+import {
+  runAndRollback,
+  runInTransaction,
+} from "./mysqlTransaction.js";
 
 describe("MysqlTransactionWrapper", () => {
   /**
@@ -24,13 +27,10 @@ describe("MysqlTransactionWrapper", () => {
 
   beforeAll(async () => {
     connection = await mysql.createConnection(connectionSettings);
-    wrapper = new MysqlTransactionWrapper({
-      connection,
-    });
   });
 
   afterAll(async () => {
-    await wrapper.connection.destroy();
+    await connection.destroy();
   });
 
   beforeEach(async () => {
@@ -45,18 +45,21 @@ describe("MysqlTransactionWrapper", () => {
     await connection.query("DROP TABLE temporary_table;");
   });
 
-  describe("runAsTransaction", () => {
+  describe(runInTransaction.name, () => {
     test("commits a successful transaction", async () => {
-      await wrapper.runAsTransaction(async (connection) => {
-        connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
-      });
+      const action = async (connection) => {
+        await connection.query(
+          "INSERT INTO temporary_table(name) VALUES (('foo'));"
+        );
+      };
+      await runInTransaction(action, connection);
       const [result] = await connection.query("SELECT * from temporary_table;");
       expect(result.length).toBe(1);
     });
 
     test("rolls back and throws on an unsuccessful transaction", async () => {
       try {
-        await wrapper.runAsTransaction(async (connection) => {
+        const action = async (connection) => {
           await connection.query(
             "INSERT INTO temporary_table VALUES (('foo'));"
           );
@@ -64,7 +67,8 @@ describe("MysqlTransactionWrapper", () => {
             "SELECT * FROM nonexistent_table;"
           );
           return result;
-        });
+        };
+        await runInTransaction(action, connection);
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
         const [result] = await connection.query(
@@ -79,16 +83,17 @@ describe("MysqlTransactionWrapper", () => {
 
   describe("autoRollback", () => {
     test("rolls back a successful transaction but does not throw", async () => {
-      await wrapper.autoRollback(async (connection) => {
+      const action = async (connection) => {
         connection.query("INSERT INTO temporary_table(name) VALUES (('foo'));");
-      });
+      };
+      await runAndRollback(action, connection);
       const [result] = await connection.query("SELECT * from temporary_table;");
       expect(result.length).toBe(0);
     });
 
     test("rolls back and throws on an unsuccessful transaction", async () => {
       try {
-        await wrapper.autoRollback(async (connection) => {
+        const action = async (connection) => {
           await connection.query(
             "INSERT INTO temporary_table VALUES (('foo'));"
           );
@@ -96,7 +101,8 @@ describe("MysqlTransactionWrapper", () => {
             "SELECT * FROM nonexistent_table;"
           );
           return result;
-        });
+        };
+        await runAndRollback(action, connection);
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
         const [result] = await connection.query(
