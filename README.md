@@ -50,6 +50,13 @@ Three layers: repository, service, and controller
 npm install
 ```
 
+## Database migration
+
+```sh
+npm run migrate:latest 
+# `migrate:up` and `migrate:down` are also valid commands
+```
+
 ## Test
 
 ```sh
