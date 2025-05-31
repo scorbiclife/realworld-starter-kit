@@ -25,6 +25,8 @@ Three layers: repository, service, and controller
 
 ## Design decisions
 
+- Used bcrypt for hashing passwords
+
 - Settling the interface of services and repositories
   - Explanation
     - A repository takes in a connection handle when we call a method,
@@ -46,6 +48,13 @@ Three layers: repository, service, and controller
 
 ```sh
 npm install
+```
+
+## Database migration
+
+```sh
+npm run migrate:latest 
+# `migrate:up` and `migrate:down` are also valid commands
 ```
 
 ## Test
