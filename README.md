@@ -25,6 +25,8 @@ Three layers: repository, service, and controller
 
 ## Design decisions
 
+- Used bcrypt for hashing passwords
+
 - Settling the interface of services and repositories
   - Explanation
     - A repository takes in a connection handle when we call a method,
