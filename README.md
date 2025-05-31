@@ -53,6 +53,6 @@ npm install
 ## Testing the database connection
 
 ```sh
-npm --env-file .env src/db/test-db-connection.js
+node --env-file .env src/db/test-db-connection.js
 ```
 
