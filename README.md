@@ -13,7 +13,34 @@ For more information on how to this works with other frontends/backends, head ov
 
 # How it works
 
-> Describe the general architecture of your app here
+Three layers: repository, service, and controller
+
+- Repository
+    - contains reusable modules that operate on a database
+
+- Service
+    - contains self-contained operations that each run one or more transactions
+
+- Controller
+    - contains operations happening in a single http request/response cycle
+
+## Design decisions
+
+- Settling the interface of services and repositories
+    - Explanation
+        - A repository takes in a connection handle when we call a method,
+          while a service takes in a connection pool when initialized
+          and manages its own connection when a method is called.
+    - Why we didn't take in a connection handle as a parameter
+        - In-memory implementations of services didn't need connection parameters,
+          hinting that this is not required in the interface of the service.
+    - **Tradeoffs**
+        - When services take care of their own database connections,
+          it becomes harder/impossible to wrap tests in a single transaction.
+            - After estimating the complexity of forcing the service to use a predetermined connection,
+              we decided to run the service in its own transaction and clean up in tests manually.
+                - This is partly because this is a one-man project and I control all code and tests.
+
 
 # Getting started
 

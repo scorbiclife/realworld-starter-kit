@@ -1,0 +1,7 @@
+{
+    "cSpell.words": [
+        "realworld",
+        "transactionally"
+    ],
+    "jest.jestCommandLine": "npm test --"
+}

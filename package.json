@@ -4,7 +4,7 @@
   "description": "express codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.",
   "main": "src/index.js",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest"
+    "test": "node --experimental-vm-modules --env-file .env node_modules/.bin/jest --detectOpenHandles"
   },
   "imports": {
     "#src/*": "./src/*"

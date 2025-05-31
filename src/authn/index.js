@@ -8,7 +8,6 @@ function validateRequest(req, res, next) {
   };
   const validRequest =
     req?.body?.user &&
-    typeof req.body.user.username === "string" &&
     typeof req.body.user.email === "string" &&
     typeof req.body.user.password === "string";
   if (!validRequest) {
@@ -18,11 +17,11 @@ function validateRequest(req, res, next) {
 }
 
 function makeUserValidationMiddleware({ userService, passport }) {
-  async function verify(username, password, done) {
+  async function verify(email, password, done) {
     let user;
 
     try {
-      user = await userService.findOne({ username });
+      user = await userService.findOneByEmail({ email });
     } catch (err) {
       return done(err);
     }
@@ -41,7 +40,7 @@ function makeUserValidationMiddleware({ userService, passport }) {
   passport.use(
     new LocalStrategy(
       // Accessing nested fields is undocumented but implemented in `passport-local` source
-      { usernameField: "user[username]", passwordField: "user[password]" },
+      { usernameField: "user[email]", passwordField: "user[password]" },
       verify
     )
   );
@@ -50,7 +49,7 @@ function makeUserValidationMiddleware({ userService, passport }) {
 
 function makeJwtMiddleware(jwtService) {
   return async function middleware(req, res) {
-    const { email, username } = req.body.user;
+    const { username, email } = req.user;
     let token;
     // JWT signing shouldn't throw
     try {
