@@ -32,7 +32,7 @@ Three layers: repository, service, and controller
     - A repository takes in a connection handle when we call a method,
       while a service takes in a connection pool when initialized
       and manages its own connection when a method is called.
-  - Why we didn't take in a connection handle as a parameter
+  - Why we didn't take in a connection handle as a parameter for services
     - In-memory implementations of services didn't need connection parameters,
       hinting that this is not required in the interface of the service.
   - **Tradeoffs**
