@@ -50,6 +50,26 @@ Three layers: repository, service, and controller
 npm install
 ```
 
+## Run
+
+```sh
+npm start
+```
+
+## Docker
+
+### Build
+
+```sh
+docker build -t "$YOUR_IMAGE_NAME" .
+```
+
+### Run
+
+```sh
+docker run --name "$YOUR_CONTAINER_NAME" -p 3000:3000 -- "$YOUR_IMAGE_NAME"
+```
+
 ## Database migration
 
 ```sh
