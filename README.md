@@ -44,11 +44,11 @@ Three layers: repository, service, and controller
 
 # Getting started
 
-## Requirements
+## Local
+
+### Requirements
 
 - POSIX shell
-
-## Local
 
 ### Setup
 
