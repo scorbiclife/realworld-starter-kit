@@ -4,11 +4,12 @@
   "description": "express codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.",
   "main": "src/index.js",
   "scripts": {
-    "start": "node --env-file .env src/index.js",
-    "test": "node --experimental-vm-modules --env-file .env node_modules/.bin/jest --detectOpenHandles",
-    "migrate:up": "node --env-file .env node_modules/.bin/knex migrate:up",
-    "migrate:down": "node --env-file .env node_modules/.bin/knex migrate:down",
-    "migrate:latest": "node --env-file .env node_modules/.bin/knex migrate:latest"
+    "env": "f() { (set -a; . ./.env 2> /dev/null; npm run \"$@\"); }; f",
+    "start": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles",
+    "migrate:up": "node node_modules/.bin/knex migrate:up)",
+    "migrate:down": "node node_modules/.bin/knex migrate:down",
+    "migrate:latest": "node node_modules/.bin/knex migrate:latest"
   },
   "imports": {
     "#src/*": "./src/*"

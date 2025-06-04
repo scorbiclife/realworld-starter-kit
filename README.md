@@ -44,21 +44,51 @@ Three layers: repository, service, and controller
 
 # Getting started
 
-## Setup
+## Local
+
+### Requirements
+
+- POSIX shell
+
+### Setup
 
 ```sh
 npm install
+cp .env.example.env .env
+"$EDITOR" .env
 ```
 
-## Database migration
+### Run
 
 ```sh
-npm run migrate:latest 
+npm run env start
+```
+
+### Database migration
+
+```sh
 # `migrate:up` and `migrate:down` are also valid commands
+npm run env migrate:latest
 ```
 
-## Test
+### Test
 
 ```sh
-npm test
+npm run env test
 ```
+
+## Docker
+
+### Build
+
+```sh
+docker build -t "$YOUR_IMAGE_NAME" .
+```
+
+### Run
+
+```sh
+docker run --name "$YOUR_CONTAINER_NAME" -p 3000:3000 -- "$YOUR_IMAGE_NAME"
+```
+
+- use docker syntax for setting environment variables.
