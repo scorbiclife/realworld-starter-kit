@@ -28,15 +28,6 @@ describe(MysqlBcryptUserService.name, () => {
     await pool.end();
   });
 
-  async function cleanup() {
-    const connection = await pool.getConnection();
-    connection.query("DELETE from `user` WHERE email = 'jake@jake.jake'");
-    connection.release();
-  }
-
-  beforeEach(cleanup);
-  afterEach(cleanup);
-
   describe(MysqlBcryptUserService.prototype.register.name, () => {
     test("happy case", async () => {
       const service = new MysqlBcryptUserService({
@@ -44,17 +35,26 @@ describe(MysqlBcryptUserService.name, () => {
         repository,
         transactionRunner: runAndRollback,
       });
-      const result = await service.register({
-        username: "jake",
-        email: "jake@jake.jake",
-        password: "valid-password",
-      });
-      expect(result.success).toBeTruthy();
-      expect(result.user).toBeDefined();
-      expect(await result.user?.isValidPassword("valid-password")).toBeTruthy();
-      expect(
-        await result.user?.isValidPassword("invalid-password")
-      ).toBeFalsy();
+
+      const testTransaction = async (connection) => {
+        const result = await service.userRegistrationTask(connection, {
+          username: "jake",
+          email: "jake@jake.jake",
+          password: "valid-password",
+        });
+        expect(result.success).toBeTruthy();
+        expect(result.user).toBeDefined();
+        expect(
+          await result.user?.isValidPassword("valid-password")
+        ).toBeTruthy();
+        expect(
+          await result.user?.isValidPassword("invalid-password")
+        ).toBeFalsy();
+      };
+
+      const connection = await pool.getConnection();
+      await runAndRollback(testTransaction, connection);
+      connection.release();
     });
 
     test("errors on duplicate email", async () => {
@@ -63,18 +63,24 @@ describe(MysqlBcryptUserService.name, () => {
         repository,
         transactionRunner: runInTransaction,
       });
-      await service.register({
-        username: "jake",
-        email: "jake@jake.jake",
-        password: "valid-password",
-      });
-      const result = await service.register({
-        username: "jake",
-        email: "jake@jake.jake",
-        password: "valid-password",
-      });
-      expect(result.success).toBeFalsy();
-      expect(result.code).toBe("EXISTING_USER");
+      const transaction = async (connection) => {
+        await service.userRegistrationTask(connection, {
+          username: "jake",
+          email: "jake@jake.jake",
+          password: "valid-password",
+        });
+        const result = await service.userRegistrationTask(connection, {
+          username: "jake",
+          email: "jake@jake.jake",
+          password: "valid-password",
+        });
+        expect(result.success).toBeFalsy();
+        expect(result.code).toBe("EXISTING_USER");
+      };
+
+      const connection = await pool.getConnection();
+      await runAndRollback(transaction, connection);
+      connection.release();
     });
   });
 });

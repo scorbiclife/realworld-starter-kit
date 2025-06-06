@@ -6,7 +6,7 @@
   "scripts": {
     "env": "f() { (set -a; . ./.env 2> /dev/null; npm run \"$@\"); }; f",
     "start": "node src/index.js",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles",
+    "test": "node --env-file .env --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles",
     "migrate:up": "node node_modules/.bin/knex migrate:up)",
     "migrate:down": "node node_modules/.bin/knex migrate:down",
     "migrate:latest": "node node_modules/.bin/knex migrate:latest"

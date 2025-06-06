@@ -49,6 +49,7 @@ Three layers: repository, service, and controller
 ### Requirements
 
 - POSIX shell
+- node 20 (for `--env-file` option for testing)
 
 ### Setup
 
@@ -74,7 +75,7 @@ npm run env migrate:latest
 ### Test
 
 ```sh
-npm run env test
+npm test
 ```
 
 ## Docker
