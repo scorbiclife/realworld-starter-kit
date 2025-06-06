@@ -1,4 +1,4 @@
-import { UserRepository } from "../UserRepository.js";
+import { UserRepository } from "./UserRepository.js";
 
 export class MysqlBcryptUserRepository extends UserRepository {
   /**
