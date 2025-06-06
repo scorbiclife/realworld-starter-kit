@@ -22,7 +22,7 @@ export class MysqlBcryptUserService extends UserService {
     const connection = await this.connectionPool.getConnection();
     try {
       return await this.transactionRunner(
-        this.userRegistrationTransaction,
+        this.userRegistrationTask,
         connection,
         { username, email, password }
       );
@@ -35,7 +35,7 @@ export class MysqlBcryptUserService extends UserService {
    * Used an arrow function for easier use in transaction wrappers that accept a free function.
    * @param {import("mysql2/promise").Connection} connection
    */
-  userRegistrationTransaction = async (
+  userRegistrationTask = async (
     connection,
     { username, email, password }
   ) => {
