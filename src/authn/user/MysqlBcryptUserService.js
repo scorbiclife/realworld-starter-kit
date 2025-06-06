@@ -1,6 +1,7 @@
 import { MysqlBcryptUserRepository } from "./MysqlBcryptUserRepository.js";
 import { UserService } from "./UserService.js";
 import { BcryptUser } from "./BcryptUser.js";
+import { runInTransaction } from "#src/db/mysqlTransaction.js";
 
 export class MysqlBcryptUserService extends UserService {
   /**
@@ -8,20 +9,18 @@ export class MysqlBcryptUserService extends UserService {
    * @param {{
    *  connectionPool: import("mysql2/promise").Pool
    *  repository: MysqlBcryptUserRepository
-   *  transactionRunner: import("#src/db/transaction.js").TransactionRunner
    * }} param0
    */
-  constructor({ connectionPool, repository, transactionRunner }) {
+  constructor({ connectionPool, repository }) {
     super();
     this.connectionPool = connectionPool;
     this.repository = repository;
-    this.transactionRunner = transactionRunner;
   }
 
   async register({ username, email, password }) {
     const connection = await this.connectionPool.getConnection();
     try {
-      return await this.transactionRunner(
+      return await runInTransaction(
         this.userRegistrationTask,
         connection,
         { username, email, password }

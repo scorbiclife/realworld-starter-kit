@@ -28,15 +28,6 @@ describe(MysqlBcryptUserService.name, () => {
     await pool.end();
   });
 
-  async function cleanup() {
-    const connection = await pool.getConnection();
-    connection.query("DELETE from `user` WHERE email = 'jake@jake.jake'");
-    connection.release();
-  }
-
-  beforeEach(cleanup);
-  afterEach(cleanup);
-
   describe(MysqlBcryptUserService.prototype.register.name, () => {
     test("happy case", async () => {
       const service = new MysqlBcryptUserService({
