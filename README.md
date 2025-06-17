@@ -91,7 +91,10 @@ docker build -t "$YOUR_IMAGE_NAME" .
 ### Run
 
 ```sh
-docker run --name "$YOUR_CONTAINER_NAME" -p 3000:3000 -- "$YOUR_IMAGE_NAME"
+docker run \
+  --name "$YOUR_CONTAINER_NAME" \
+  -p 3000:3000 \
+  --env-file .env \
+  -v ~/.aws:/root/.aws \
+  -- "$YOUR_IMAGE_NAME"
 ```
-
-- use docker syntax for setting environment variables.
