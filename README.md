@@ -75,6 +75,8 @@ npm run env migrate:latest
 ### Test
 
 ```sh
+# Some tests require access to AWS KMS
+aws sso login --profile $YOUR_AWS_SSO_PROFILE # or other login method
 npm test
 ```
 
