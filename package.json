@@ -19,6 +19,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-kms": "^3.830.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
