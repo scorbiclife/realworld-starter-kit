@@ -17,7 +17,7 @@ if (!encryptedJwtSecret) {
   throw new Error("ENCRYPTED_JWT_SECRET is not set");
 }
 const jwtService = new Hs256JwtService({
-  secret: defaultSecretService.decrypt(encryptedJwtSecret),
+  secret: await defaultSecretService.decrypt(encryptedJwtSecret),
   expiresIn: "10m",
 });
 
