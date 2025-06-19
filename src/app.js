@@ -37,3 +37,11 @@ app.use("/", (req, res) => {
   res.json({ message: "hello world" });
   return;
 });
+
+// Global error handler
+app.use((error, req, res, next) => {
+  res.status(500).json({
+    message: "Internal server error",
+    ...(process.env.NODE_ENV === "development" && { error: error.message }),
+  });
+});

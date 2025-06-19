@@ -11,15 +11,14 @@
  */
 export async function runInTransaction(action, connection, ...args) {
   await connection.query("START TRANSACTION;");
-  let result;
   try {
-    result = await action(connection, ...args);
+    const result = await action(connection, ...args);
+    await connection.query("COMMIT;");
+    return result;
   } catch (error) {
     await connection.query("ROLLBACK;");
     throw error;
   }
-  await connection.query("COMMIT;");
-  return result;
 }
 
 /**

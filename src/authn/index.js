@@ -30,8 +30,12 @@ function makeUserValidationMiddleware({ userService, passport }) {
       return done(null, false);
     }
 
-    if (!(await user.isValidPassword(password))) {
-      return done(null, false);
+    try {
+      if (!(await user.isValidPassword(password))) {
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err);
     }
 
     return done(null, user);
@@ -55,7 +59,6 @@ function makeJwtMiddleware(jwtService) {
     try {
       token = await jwtService.sign({ username, email });
     } catch (error) {
-      // TODO: add logger
       res.status(500).json({});
       return;
     }
