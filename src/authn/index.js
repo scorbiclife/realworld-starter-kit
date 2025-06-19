@@ -1,3 +1,4 @@
+import logger from "#src/logger/index.js";
 import express from "express";
 import { Passport } from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -59,6 +60,7 @@ function makeJwtMiddleware(jwtService) {
     try {
       token = await jwtService.sign({ username, email });
     } catch (error) {
+      logger.logError(error, { message: "JWT signing failed" });
       res.status(500).json({});
       return;
     }

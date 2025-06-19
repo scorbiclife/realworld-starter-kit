@@ -23,8 +23,8 @@ describe('Logger Integration', () => {
   describe('Global Logger Instance', () => {
     test('should be able to log messages', () => {
       expect(() => {
-        logger.info('Test message');
-        logger.error('Test error');
+        logger.info('Testing logger');
+        logger.error('Testing error logger');
       }).not.toThrow();
     });
   });

@@ -28,12 +28,17 @@ describe(MysqlBcryptUserService.name, () => {
     await pool.end();
   });
 
+  beforeEach(async () => {
+    const connection = await pool.getConnection();
+    await connection.query("TRUNCATE TABLE `user`;");
+    connection.release();
+  });
+
   describe(MysqlBcryptUserService.prototype.register.name, () => {
     test("happy case", async () => {
       const service = new MysqlBcryptUserService({
         connectionPool: pool,
         repository,
-        transactionRunner: runAndRollback,
       });
 
       const testTransaction = async (connection) => {
@@ -43,11 +48,14 @@ describe(MysqlBcryptUserService.name, () => {
           password: "valid-password",
         });
         expect(result.success).toBeTruthy();
+        // @ts-ignore
         expect(result.user).toBeDefined();
         expect(
+          // @ts-ignore
           await result.user?.isValidPassword("valid-password")
         ).toBeTruthy();
         expect(
+          // @ts-ignore
           await result.user?.isValidPassword("invalid-password")
         ).toBeFalsy();
       };
@@ -61,7 +69,6 @@ describe(MysqlBcryptUserService.name, () => {
       const service = new MysqlBcryptUserService({
         connectionPool: pool,
         repository,
-        transactionRunner: runInTransaction,
       });
       const transaction = async (connection) => {
         await service.userRegistrationTask(connection, {
@@ -75,6 +82,7 @@ describe(MysqlBcryptUserService.name, () => {
           password: "valid-password",
         });
         expect(result.success).toBeFalsy();
+        // @ts-ignore
         expect(result.code).toBe("EXISTING_USER");
       };
 

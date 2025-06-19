@@ -1,4 +1,5 @@
 import { KMSClient, DecryptCommand, EncryptCommand } from "@aws-sdk/client-kms";
+import logger from "#src/logger/index.js";
 
 export class AwsKmsSecretService {
   /**
@@ -14,32 +15,49 @@ export class AwsKmsSecretService {
 
   /**
    * @param {string} secret
-   * @returns {Promise<string>}
+   * @returns {Promise<string | null>}
    */
   async encrypt(secret) {
     const command = new EncryptCommand({
       KeyId: this.keyId,
       Plaintext: Buffer.from(secret, "base64"),
     });
-    const response = await this.kmsClient.send(command);
-    if (!response.CiphertextBlob) {
-      throw new Error("No ciphertext received from KMS");
+    let response;
+    try {
+      response = await this.kmsClient.send(command);
+    } catch (error) {
+      logger.logError(error);
+      return null;
+    }
+    if (!response || !response.CiphertextBlob) {
+      logger.error("No ciphertext received from KMS", { keyId: this.keyId });
+      return null;
     }
     return Buffer.from(response.CiphertextBlob).toString("base64");
   }
 
   /**
    * @param {string} encryptedSecret
-   * @returns {Promise<string>}
+   * @returns {Promise<string | null>}
    */
   async decrypt(encryptedSecret) {
     const command = new DecryptCommand({
       KeyId: this.keyId,
       CiphertextBlob: Buffer.from(encryptedSecret, "base64"),
     });
-    const response = await this.kmsClient.send(command);
-    if (!response.Plaintext) {
-      throw new Error("No plaintext received from KMS");
+    let response;
+    try {
+      response = await this.kmsClient.send(command);
+    } catch (error) {
+      logger.logError(error, { keyId: this.keyId, encryptedSecret });
+      return null;
+    }
+    if (!response || !response.Plaintext) {
+      logger.error("No plaintext received from KMS", {
+        keyId: this.keyId,
+        encryptedSecret,
+      });
+      return null;
     }
     return Buffer.from(response.Plaintext).toString("base64");
   }
