@@ -1,0 +1,2 @@
+# Ignore the logs but keep this directory in the repo
+*.log
